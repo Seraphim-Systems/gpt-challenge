@@ -1,1 +1,136 @@
-# gpt-challenge
+# Transformer Activity Pack
+
+**Transformer Architectures Activity: From BERT to GPT to BART**
+
+## Purpose
+
+This activity is designed so that you start from a complete encoder-only model, inspect a complete encoder-decoder model, and then construct the decoder-only model by yourselves. The intention is not only to code, but to explain what architectural change turns one transformer family into another. All explanations must refer to the outputs produced by your own implementation.
+
+## Files in the Pack
+
+The pack is organized as Python fragments. The fragments intentionally do not contain import statements. They are meant to be loaded from a main Python file or notebook cell that already imported the shared dependencies.
+
+| File | Purpose |
+|------|---------|
+| `00_setup.py` | Setup, toy corpus, vocabulary, train/validation split. Hyperparameters are intentionally left blank. |
+| `01_batching.py` | Batch helpers for the three tasks: language modeling, classification, and encoder-decoder training. |
+| `02_core_modules.py` | Full FeedForward and AttentionHead. Skeletons for EncoderBlock, DecoderBlock, and EncoderDecoderBlock. |
+| `03_models_bert_bart.py` | Full TinyBERT and TinyBART. |
+| `04_model_gpt_skeleton.py` | Skeleton of TinyGPT, including generation methods. |
+| `05_training_utils_and_demos.py` | Full BERT and BART utilities and demos. GPT demo intentionally empty. |
+| `main.py` | Main driver that coordinates execution of all fragments. |
+
+## Setup
+
+```bash
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the program
+python main.py
+```
+
+## Suggested Workflow
+
+### Task 0: Import Files and Modules
+
+The import statements have been removed from all the provided Python files. Your first task is to identify the necessary modules and make sure they are correctly imported so that the code can run.
+
+Then, create a main file that coordinates the execution of the program. This file should import the provided fragments, instantiate the corresponding models, and run the desired demos. You can use `05_training_utils_and_demos.py` as a guide.
+
+---
+
+### Task 1: Choose Hyperparameters
+
+Fill in the hyperparameters in `00_setup.py`. Start with values that are small enough to train quickly.
+
+**Questions:**
+
+1. Which hyperparameters change model capacity, and which mainly change training behavior?
+2. Why does context length matter differently for BERT-style classification and GPT-style generation?
+3. What trade-off appears when increasing d_model or the number of layers?
+
+---
+
+### Task 2: The Attention Mechanism
+
+The AttentionHead is fully supplied in `02_core_modules.py`. Since this is the key architectural unit behind all three models, answer the questions below.
+
+**Questions:**
+
+1. Temporarily modify the attention mechanism so that causal masking is disabled. Run the GPT model later in the activity (Task 6) with and without masking, using the same prompt. Compare the generated outputs and describe two concrete differences.
+
+---
+
+### Task 3: Complete the Three Block Types
+
+Use the residual pattern to complete:
+- EncoderBlock
+- DecoderBlock
+- EncoderDecoderBlock
+
+**Questions:**
+
+1. Run your GPT model and then temporarily disable causal masking in the DecoderBlock. Generate text in both cases. Based on the outputs, explain which version behaves autoregressively and why.
+2. In the encoder-decoder block, where does information from the source sequence enter?
+3. Why is cross-attention not needed in BERT or GPT?
+
+---
+
+### Task 4: Build TinyGPT by Mirroring the Other Models
+
+Complete TinyGPT in `04_model_gpt_skeleton.py`. You should reuse the architectural patterns that can be found in BERT and BART models.
+
+**Questions:**
+
+1. Which precise architectural change makes GPT decoder-only rather than encoder-only?
+2. Why does GPT use a language-modeling head instead of a classification head?
+3. Why is next-token prediction compatible with decoder masking but not with bidirectional self-attention?
+
+---
+
+### Task 5: Implement Different Decoding Strategies
+
+Complete the GPT generation methods:
+- temperature sampling
+- top-k sampling
+
+**Questions:**
+
+1. Generate text from the same prompt using temperature = 0.5, and temperature = 1.5. Include both outputs and describe how the structure, coherence, and variability of the text change. Explain why temperature produces this effect.
+2. What practical problem does top-k sampling try to reduce?
+3. Try to use the encoder-only (BERT-like) model to generate text in the same way as GPT. What happens in practice? Based on this experiment, explain why the GPT model is suitable for generation and the BERT model is not.
+
+---
+
+### Task 6: Complete the GPT Demo
+
+The BERT and BART demos are complete. The GPT demo in `05_training_utils_and_demos.py` is empty on purpose. You should instantiate the model, train it, and compare generations under different decoding settings.
+
+**Reflection Questions:**
+
+1. Which decoding method produced the most coherent output? And the most diverse output?
+2. Did lower validation loss always imply more interesting generations?
+3. What kinds of errors remained even after training?
+
+---
+
+## Discussion
+
+After the coding tasks, go along the following questions:
+
+### Using Your Own Implementations of BERT, GPT, and BART:
+
+1. Provide one concrete example of output from each model (or explain why one cannot produce output).
+2. Based on these results, explain how differences in masking and attention structure lead to different behaviors. Your answer must refer to the outputs you obtained.
+
+### Masking Comparison Experiment:
+
+Run your model once with causal masking enabled and once with it disabled (you may temporarily modify the code). Generate text in both cases using the same prompt.
+
+1. Describe two concrete differences you observe in the generated outputs.
+2. Explain why these differences occur.
