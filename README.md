@@ -71,7 +71,7 @@ Both d_model and number of layers are hyperparameters that influence model capac
 
 ---
 
-### [ ] Task 3: Complete the Three Block Types
+### [x] Task 3: Complete the Three Block Types
 
 Use the residual pattern to complete:
 - [x] EncoderBlock
