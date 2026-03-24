@@ -6,6 +6,8 @@
 
 import torch
 
+from task2_masking_comparison import compare_masking
+
 
 @torch.no_grad()
 def estimate_bert_loss(model, eval_iters=20):
@@ -138,13 +140,95 @@ print("\n" + "=" * 60)
 print("GPT-LIKE DEMO")
 print("=" * 60)
 
-# TODO:
+# Completed:
 # 1. Instantiate TinyGPT.
 # 2. Create an optimizer.
 # 3. Train the model with get_lm_batch().
 # 4. Evaluate it with estimate_gpt_loss().
-# 5. Generate text with:
-#       - temperature sampling
-#       - top-k sampling
-#       - beam search
-# 6. Compare the outputs qualitatively.
+# 5. Generate text with temperature, top-k, and beam search.
+# 6. Compare outputs qualitatively.
+
+
+
+tiny_gpt_model = TinyGPT(
+    vocab_size=vocab_size,
+    d_model=d_model,
+    context_length=context_length,
+    n_layers=n_layers
+).to(device)
+
+tiny_gpt_optimizer = torch.optim.Adam(tiny_gpt_model.parameters(), lr=learning_rate)
+
+#training
+for step in range(101):
+    if step % 50 == 0:
+        losses = estimate_gpt_loss(tiny_gpt_model, eval_iters=10)
+        print(
+            f"Step {step:3d} | "
+            f"train loss: {losses['train']:.4f} | "
+            f"val loss: {losses['val']:.4f}"
+        )
+
+    x, y = get_lm_batch("train")
+    logits, loss = tiny_gpt_model(x, y)
+
+    tiny_gpt_optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    tiny_gpt_optimizer.step()
+
+#evaluation
+losses = estimate_gpt_loss(tiny_gpt_model, eval_iters=10)
+print(
+    f"Final evaluation | "
+    f"train loss: {losses['train']:.4f} | "
+    f"val loss: {losses['val']:.4f}"
+)
+
+#text generation
+prompt = "Natural language"
+prompt_ids = torch.tensor([encode(prompt)], dtype=torch.long, device=device)
+
+# temperature sampling
+temperature_ids = tiny_gpt_model.generate_temperature(
+    prompt_ids.clone(), max_new_tokens=80, temperature=1.0
+)
+temperature_text = decode(temperature_ids[0].tolist())
+
+# top-k sampling
+top_k_ids = tiny_gpt_model.generate_top_k(
+    prompt_ids.clone(), max_new_tokens=80, temperature=1.0, k=5
+)
+top_k_text = decode(top_k_ids[0].tolist())
+
+# beam search
+beam_ids = tiny_gpt_model.generate_beam_search(
+    prompt_ids.clone(), max_new_tokens=80, num_beams=5
+)
+beam_text = decode(beam_ids[0].tolist())
+
+#comparing outputs
+print("\nComparing generated texts:")
+print("Temperature sampling:", temperature_text)
+print("Top-k sampling:", top_k_text)
+print("Beam search:", beam_text)
+
+def _diversity_ratio(text):
+    if not text:
+        return 0.0
+    return len(set(text)) / len(text)
+
+print(
+    f"Diversity ratio (unique chars / total chars) -> "
+    f"temp: {_diversity_ratio(temperature_text):.3f}, "
+    f"top-k: {_diversity_ratio(top_k_text):.3f}, "
+    f"beam: {_diversity_ratio(beam_text):.3f}"
+)
+
+compare_masking(
+    model=tiny_gpt_model,
+    encode=encode,
+    decode=decode,
+    device=device,
+    prompt=prompt,
+    max_new_tokens=80,
+)

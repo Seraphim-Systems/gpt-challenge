@@ -10,15 +10,15 @@ This activity is designed so that you start from a complete encoder-only model, 
 
 The pack is organized as Python fragments. The fragments intentionally do not contain import statements. They are meant to be loaded from a main Python file or notebook cell that already imported the shared dependencies.
 
-| File | Purpose |
-|------|---------|
-| `00_setup.py` | Setup, toy corpus, vocabulary, train/validation split. Hyperparameters are intentionally left blank. |
-| `01_batching.py` | Batch helpers for the three tasks: language modeling, classification, and encoder-decoder training. |
-| `02_core_modules.py` | Full FeedForward and AttentionHead. Skeletons for EncoderBlock, DecoderBlock, and EncoderDecoderBlock. |
-| `03_models_bert_bart.py` | Full TinyBERT and TinyBART. |
-| `04_model_gpt_skeleton.py` | Skeleton of TinyGPT, including generation methods. |
-| `05_training_utils_and_demos.py` | Full BERT and BART utilities and demos. GPT demo intentionally empty. |
-| `main.py` | Main driver that coordinates execution of all fragments. |
+| File                               | Purpose                                                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `00_setup.py`                    | Setup, toy corpus, vocabulary, train/validation split. Hyperparameters are intentionally left blank.   |
+| `01_batching.py`                 | Batch helpers for the three tasks: language modeling, classification, and encoder-decoder training.    |
+| `02_core_modules.py`             | Full FeedForward and AttentionHead. Skeletons for EncoderBlock, DecoderBlock, and EncoderDecoderBlock. |
+| `03_models_bert_bart.py`         | Full TinyBERT and TinyBART.                                                                            |
+| `04_model_gpt_skeleton.py`       | Skeleton of TinyGPT, including generation methods.                                                     |
+| `05_training_utils_and_demos.py` | Full BERT and BART utilities and demos. GPT demo intentionally empty.                                  |
+| `main.py`                        | Main driver that coordinates execution of all fragments.                                               |
 
 ## Setup
 
@@ -38,36 +38,34 @@ python main.py
 
 ### [x] Task 0: Import Files and Modules
 
-- [x] The import statements have been removed from all the provided Python files. Identify the necessary modules and make sure they are correctly imported so that the code can run.
-
-- [x] Create a main file that coordinates the execution of the program. This file should import the provided fragments, instantiate the corresponding models, and run the desired demos. You can use `05_training_utils_and_demos.py` as a guide.
+- [X] The import statements have been removed from all the provided Python files. Identify the necessary modules and make sure they are correctly imported so that the code can run.
+- [X] Create a main file that coordinates the execution of the program. This file should import the provided fragments, instantiate the corresponding models, and run the desired demos. You can use `05_training_utils_and_demos.py` as a guide.
 
 ---
 
 ### [x] Task 1: Choose Hyperparameters
 
-- [x] Fill in the hyperparameters in `00_setup.py`. Start with values that are small enough to train quickly.
+- [X] Fill in the hyperparameters in `00_setup.py`. Start with values that are small enough to train quickly.
 
 **Questions:**
 
-- [x] Which hyperparameters change model capacity, and which mainly change training behavior?
-the hyperparameters that change model capacity make up the size of the neural network and its ability(in theory) to learn more complex patterns. These ones include d_model(hidden dimensions), n_layers(number os layers and blocks), n_heads(number of attention heads), d_ff(feedforward network size) and vocab_size. 
-the hyperparameters that change the training behaviour make up how the model would update the weights and how fast it can learn and generate unseen data without changing architectural things. these include learning rate, batch size, dropout, weight decay, warmup steps and epochs. 
+- [X] Which hyperparameters change model capacity, and which mainly change training behavior?
+  the hyperparameters that change model capacity make up the size of the neural network and its ability(in theory) to learn more complex patterns. These ones include d_model(hidden dimensions), n_layers(number os layers and blocks), n_heads(number of attention heads), d_ff(feedforward network size) and vocab_size.
+  the hyperparameters that change the training behaviour make up how the model would update the weights and how fast it can learn and generate unseen data without changing architectural things. these include learning rate, batch size, dropout, weight decay, warmup steps and epochs.
+- [X] Why does context length matter differently for BERT-style classification and GPT-style generation?
+  BERT has a small text size that it uses, whereas GPT generally uses a bigger context in order to make better assumptions and create better responses. BERT only needs enough context to classify a text, while GPT needs enough context to allow it to reason, in order to come back with a good and somewhat reasonable response.
+- [X] What trade-off appears when increasing d_model or the number of layers?
+  Both d_model and number of layers are hyperparameters that influence model capacity, as mentioned for the first question, so the model would benefit from increasing one of them as it would learn more complex patterns and lead to better performance. However, the tradeoff is that it would require more computation, time, and VRAM. Moreover, if the dataset is small and the dimensions or number of layers are too big, the model might overfit and generalize poorly. Also, deeper models can lead to vanishng gradients or exploding gradients, which can make training unstable.
 
-- [x] Why does context length matter differently for BERT-style classification and GPT-style generation?
-BERT has a small text size that it uses, whereas GPT generally uses a bigger context in order to make better assumptions and create better responses. BERT only needs enough context to classify a text, while GPT needs enough context to allow it to reason, in order to come back with a good and somewhat reasonable response. 
-
-- [x] What trade-off appears when increasing d_model or the number of layers?
-Both d_model and number of layers are hyperparameters that influence model capacity, as mentioned for the first question, so the model would benefit from increasing one of them as it would learn more complex patterns and lead to better performance. However, the tradeoff is that it would require more computation, time, and VRAM. Moreover, if the dataset is small and the dimensions or number of layers are too big, the model might overfit and generalize poorly. Also, deeper models can lead to vanishng gradients or exploding gradients, which can make training unstable. 
 ---
 
 ### [x] Task 2: The Attention Mechanism
 
-- [x] The AttentionHead is fully supplied in `02_core_modules.py`. Since this is the key architectural unit behind all three models, answer the question below.
+- [X] The AttentionHead is fully supplied in `02_core_modules.py`. Since this is the key architectural unit behind all three models, answer the question below.
 
 **Questions:**
 
-- [x] Temporarily modify the attention mechanism so that causal masking is disabled. Run the GPT model later in the activity (Task 6) with and without masking, using the same prompt. Compare the generated outputs and describe two concrete differences.
+- [X] Temporarily modify the attention mechanism so that causal masking is disabled. Run the GPT model later in the activity (Task 6) with and without masking, using the same prompt. Compare the generated outputs and describe two concrete differences.
 
 ---
 
@@ -95,19 +93,20 @@ Use the residual pattern to complete:
 
 ### [ ] Task 4: Build TinyGPT by Mirroring the Other Models
 
-- [ ] Complete TinyGPT in `04_model_gpt_skeleton.py`. You should reuse the architectural patterns that can be found in BERT and BART models.
+- [X] Complete TinyGPT in `04_model_gpt_skeleton.py`. You should reuse the architectural patterns that can be found in BERT and BART models.
 
 **Questions:**
 
-- [ ] Which precise architectural change makes GPT decoder-only rather than encoder-only?
-- [ ] Why does GPT use a language-modeling head instead of a classification head?
-- [ ] Why is next-token prediction compatible with decoder masking but not with bidirectional self-attention?
+- [X] Which precise architectural change makes GPT decoder-only rather than encoder-only?
+- [X] Why does GPT use a language-modeling head instead of a classification head?
+- [X] Why is next-token prediction compatible with decoder masking but not with bidirectional self-attention?
 
 ---
 
 ### [ ] Task 5: Implement Different Decoding Strategies
 
 Complete the GPT generation methods:
+
 - [ ] temperature sampling
 - [ ] top-k sampling
 
@@ -119,15 +118,18 @@ Complete the GPT generation methods:
 
 ---
 
-### [ ] Task 6: Complete the GPT Demo
+### [x] Task 6: Complete the GPT Demo
 
-- [ ] The BERT and BART demos are complete. The GPT demo in `05_training_utils_and_demos.py` is empty on purpose. Instantiate the model, train it, and compare generations under different decoding settings.
+- [X] The BERT and BART demos are complete. The GPT demo in `05_training_utils_and_demos.py` is empty on purpose. Instantiate the model, train it, and compare generations under different decoding settings.
 
 **Reflection Questions:**
 
-- [ ] Which decoding method produced the most coherent output? And the most diverse output?
-- [ ] Did lower validation loss always imply more interesting generations?
-- [ ] What kinds of errors remained even after training?
+- [X] Which decoding method produced the most coherent output? And the most diverse output?
+  From the outputs in this run, top-k sampling produced the most coherent output overall, while temperature sampling produced the most diverse output. beam search was the most conservative and repeated patterns more often, so it was less diverse and in this tiny setup also less natural.
+- [X] Did lower validation loss always imply more interesting generations?
+  No. lower validation loss generally means better next-token prediction on average, but it does not guarantee that generations are more interesting. in this experiment, outputs could still be repetitive or dull even when validation loss improved.
+- [X] What kinds of errors remained even after training?
+  The main remaining errors were character repetition loops, broken or partial words, abrupt sentence transitions, and local incoherence after a few tokens. beam search especially showed repetitive continuations, and all methods still produced text that looked statistically plausible but not fully meaningful.
 
 ---
 
@@ -143,6 +145,5 @@ Complete the GPT generation methods:
 ### [ ] Masking Comparison Experiment
 
 - [ ] Run your model once with causal masking enabled and once with it disabled (you may temporarily modify the code). Generate text in both cases using the same prompt.
-
 - [ ] Describe two concrete differences you observe in the generated outputs.
 - [ ] Explain why these differences occur.

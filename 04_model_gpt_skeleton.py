@@ -207,3 +207,41 @@ class TinyGPT(nn.Module):
             next_token = torch.multinomial(probs, num_samples=1)  # [B, 1]
             idx = torch.cat([idx, next_token], dim=1)
         return idx
+
+    def generate_beam_search(self, idx, max_new_tokens=100, num_beams=5, length_penalty=0.0):
+        """
+        Beam search decoding (batch size 1 for simplicity).
+
+        Keeps the top `num_beams` partial hypotheses at each step and
+        returns the highest scoring sequence at the end.
+        """
+        if idx.size(0) != 1:
+            raise ValueError("generate_beam_search currently supports batch size 1")
+
+        beams = [(idx, 0.0)]
+
+        for _ in range(max_new_tokens):
+            candidates = []
+            for seq, score in beams:
+                idx_cond = seq[:, -self.context_length :]
+                logits, _ = self(idx_cond)
+                log_probs = F.log_softmax(logits[:, -1, :], dim=-1)  # [1, V]
+
+                top_log_probs, top_indices = torch.topk(log_probs, k=num_beams, dim=-1)
+
+                for beam_i in range(num_beams):
+                    next_token = top_indices[:, beam_i : beam_i + 1]
+                    next_seq = torch.cat([seq, next_token], dim=1)
+                    next_score = score + top_log_probs[0, beam_i].item()
+                    candidates.append((next_seq, next_score))
+
+            def rank_key(item):
+                seq, seq_score = item
+                if length_penalty <= 0:
+                    return seq_score
+                return seq_score / (seq.size(1) ** length_penalty)
+
+            candidates.sort(key=rank_key, reverse=True)
+            beams = candidates[:num_beams]
+
+        return beams[0][0]
