@@ -129,11 +129,12 @@ class DecoderBlock(nn.Module):
         # TODO:
         # 1. Apply layer norm before masked self-attention
         # 2. Add the residual connection
+        x = x + self.self_attn(self.ln1(x))
+
         # 3. Apply layer norm before feedforward
         # 4. Add the residual connection
+        x = x + self.ffwd(self.ln2(x))
 
-        # x = ...
-        # x = ...
         return x
 
 
@@ -162,10 +163,12 @@ class EncoderDecoderBlock(nn.Module):
     def forward(self, x, encoder_out):
         # TODO:
         # 1. Apply causal self-attention with residual connection
-        # 2. Apply cross-attention using encoder_out as context
-        # 3. Apply feedforward with residual connection
+        x = x + self.self_attn(self.ln1(x))
 
-        # x = ...
-        # x = ...
-        # x = ...
+        # 2. Apply cross-attention using encoder_out as context
+        x = x + self.cross_attn(self.ln2(x), context=encoder_out)
+
+        # 3. Apply feedforward with residual connection
+        x = x + self.ffwd(self.ln3(x))
+
         return x
