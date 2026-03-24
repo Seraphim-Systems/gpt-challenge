@@ -69,20 +69,26 @@ python main.py
 
 ---
 
-### [ ] Task 3: Complete the Three Block Types
+### [x] Task 3: Complete the Three Block Types
 
 Use the residual pattern to complete:
-
-- [ ] EncoderBlock
-- [ ] DecoderBlock
-- [ ] EncoderDecoderBlock
+- [x] EncoderBlock
+- [x] DecoderBlock
+- [x] EncoderDecoderBlock
 
 **Questions:**
 
-- [ ] Run your GPT model and then temporarily disable causal masking in the DecoderBlock. Generate text in both cases. Based on the outputs, explain which version behaves autoregressively and why.
-- [ ] In the encoder-decoder block, where does information from the source sequence enter?
-- [ ] Why is cross-attention not needed in BERT or GPT?
+1. [x] Run your GPT model and then temporarily disable causal masking in the DecoderBlock. Generate text in both cases. Based on the outputs, explain which version behaves autoregressively and why.
+- The version with causal masking behaves autoregressively because each position is only able to attend to previous positions, forcing the model to predict each token from context alone. Without masking, future tokens would leak into the attention, which leads to breaking the autoregressive property.
 
+2. [x] In the encoder-decoder block, where does information from the source sequence enter?
+```python
+  x = x + self.cross_attn(self.ln2(x), context=encoder_out)
+```
+- The cross attention handles the source sequence, while causal attention looks at what it generated so far.
+
+3. [x] Why is cross-attention not needed in BERT or GPT?
+- Both of these have only one sequence which means that a cross-attention mechanism (that allows reading from a separate encoder block) is unnecessary. GPT just generates without looking at an encoder and BERT just reads.
 ---
 
 ### [ ] Task 4: Build TinyGPT by Mirroring the Other Models
