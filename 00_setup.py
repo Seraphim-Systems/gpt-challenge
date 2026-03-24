@@ -4,6 +4,7 @@
 # ============================================================
 
 import random
+
 import torch
 
 SEED = 42
@@ -38,6 +39,7 @@ vocab_size = len(chars)
 stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
 
+
 def encode(s: str):
     """
     Convert a string into token ids.
@@ -71,8 +73,8 @@ print("Vocabulary:", chars)
 # Leave these blank for students.
 # ============================================================
 
-batch_size = 
-context_length = 
-d_model = 
-n_layers = 
-learning_rate = 
+batch_size = 16
+context_length = 128
+d_model = 128
+n_layers = 2
+learning_rate = 5e-4
