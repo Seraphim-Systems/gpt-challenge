@@ -36,28 +36,28 @@ python main.py
 
 ## Suggested Workflow
 
-### [ ] Task 0: Import Files and Modules
+### [x] Task 0: Import Files and Modules
 
-- [ ] The import statements have been removed from all the provided Python files. Identify the necessary modules and make sure they are correctly imported so that the code can run.
+- [x] The import statements have been removed from all the provided Python files. Identify the necessary modules and make sure they are correctly imported so that the code can run.
 
-- [ ] Create a main file that coordinates the execution of the program. This file should import the provided fragments, instantiate the corresponding models, and run the desired demos. You can use `05_training_utils_and_demos.py` as a guide.
+- [x] Create a main file that coordinates the execution of the program. This file should import the provided fragments, instantiate the corresponding models, and run the desired demos. You can use `05_training_utils_and_demos.py` as a guide.
 
 ---
 
-### [ ] Task 1: Choose Hyperparameters
+### [x] Task 1: Choose Hyperparameters
 
-- [ ] Fill in the hyperparameters in `00_setup.py`. Start with values that are small enough to train quickly.
+- [x] Fill in the hyperparameters in `00_setup.py`. Start with values that are small enough to train quickly.
 
 **Questions:**
 
-- [ ] Which hyperparameters change model capacity, and which mainly change training behavior?
+- [x] Which hyperparameters change model capacity, and which mainly change training behavior?
 the hyperparameters that change model capacity make up the size of the neural network and its ability(in theory) to learn more complex patterns. These ones include d_model(hidden dimensions), n_layers(number os layers and blocks), n_heads(number of attention heads), d_ff(feedforward network size) and vocab_size. 
 the hyperparameters that change the training behaviour make up how the model would update the weights and how fast it can learn and generate unseen data without changing architectural things. these include learning rate, batch size, dropout, weight decay, warmup steps and epochs. 
 
-- [ ] Why does context length matter differently for BERT-style classification and GPT-style generation?
+- [x] Why does context length matter differently for BERT-style classification and GPT-style generation?
 BERT has a small text size that it uses, whereas GPT generally uses a bigger context in order to make better assumptions and create better responses. BERT only needs enough context to classify a text, while GPT needs enough context to allow it to reason, in order to come back with a good and somewhat reasonable response. 
 
-- [ ] What trade-off appears when increasing d_model or the number of layers?
+- [x] What trade-off appears when increasing d_model or the number of layers?
 Both d_model and number of layers are hyperparameters that influence model capacity, as mentioned for the first question, so the model would benefit from increasing one of them as it would learn more complex patterns and lead to better performance. However, the tradeoff is that it would require more computation, time, and VRAM. Moreover, if the dataset is small and the dimensions or number of layers are too big, the model might overfit and generalize poorly. Also, deeper models can lead to vanishng gradients or exploding gradients, which can make training unstable. 
 ---
 
