@@ -129,11 +129,12 @@ class DecoderBlock(nn.Module):
         # TODO:
         # 1. Apply layer norm before masked self-attention
         # 2. Add the residual connection
+        x = x + self.self_attn(self.ln1(x))
+
         # 3. Apply layer norm before feedforward
         # 4. Add the residual connection
+        x = x + self.ffwd(self.ln2(x))
 
-        # x = ...
-        # x = ...
         return x
 
 
