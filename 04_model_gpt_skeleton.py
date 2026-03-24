@@ -6,6 +6,10 @@
 # autoregressive language modeling.
 # ============================================================
 
+import torch
+from torch import nn
+import torch.nn.functional as F
+
 
 class TinyGPT(nn.Module):
     """
@@ -17,6 +21,7 @@ class TinyGPT(nn.Module):
     3. Project hidden states to vocabulary logits
     4. If targets are provided, compute next-token loss
     """
+
     def __init__(self, vocab_size, d_model, context_length, n_layers):
         super().__init__()
 
@@ -25,9 +30,9 @@ class TinyGPT(nn.Module):
         self.token_embedding = nn.Embedding(vocab_size, d_model)
         self.position_embedding = nn.Embedding(context_length, d_model)
 
-        self.blocks = nn.Sequential(*[
-            DecoderBlock(d_model, context_length) for _ in range(n_layers)
-        ])
+        self.blocks = nn.Sequential(
+            *[DecoderBlock(d_model, context_length) for _ in range(n_layers)]
+        )
 
         self.ln_f = nn.LayerNorm(d_model)
         self.lm_head = nn.Linear(d_model, vocab_size)

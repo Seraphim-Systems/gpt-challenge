@@ -1,10 +1,10 @@
 # ============================================================
 # 00_setup.py
 # Setup utilities, tiny corpus, vocabulary, and train/val split
-# This fragment intentionally contains no import statements.
-# It is designed to be loaded with exec(..., globals()) after the
-# main driver has already imported math, random, torch, nn, F, Optional.
 # ============================================================
+
+import random
+import torch
 
 SEED = 42
 random.seed(SEED)

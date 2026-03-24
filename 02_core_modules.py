@@ -5,17 +5,21 @@
 # Other blocks remain partially scaffolded for the activity.
 # ============================================================
 
+import math
+import torch
+from torch import nn
+import torch.nn.functional as F
+
 
 class FeedForward(nn.Module):
     """
     Position-wise feedforward layer.
     """
+
     def __init__(self, d_model):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(d_model, 4 * d_model),
-            nn.ReLU(),
-            nn.Linear(4 * d_model, d_model)
+            nn.Linear(d_model, 4 * d_model), nn.ReLU(), nn.Linear(4 * d_model, d_model)
         )
 
     def forward(self, x):
@@ -35,6 +39,7 @@ class AttentionHead(nn.Module):
     3. Cross-attention
        context=encoder_out, causal=False
     """
+
     def __init__(self, d_model, context_length, causal=False):
         super().__init__()
 
@@ -45,8 +50,7 @@ class AttentionHead(nn.Module):
         self.causal = causal
 
         self.register_buffer(
-            "tril",
-            torch.tril(torch.ones(context_length, context_length))
+            "tril", torch.tril(torch.ones(context_length, context_length))
         )
 
     def forward(self, x, context=None):
@@ -72,20 +76,17 @@ class AttentionHead(nn.Module):
         B, T, C = x.shape
         _, S, _ = context.shape
 
-        Q = self.query(x)          # [B, T, C]
-        K = self.key(context)      # [B, S, C]
-        V = self.value(context)    # [B, S, C]
+        Q = self.query(x)  # [B, T, C]
+        K = self.key(context)  # [B, S, C]
+        V = self.value(context)  # [B, S, C]
 
-        scores = Q @ K.transpose(-2, -1) / math.sqrt(C)   # [B, T, S]
+        scores = Q @ K.transpose(-2, -1) / math.sqrt(C)  # [B, T, S]
 
         if self.causal:
-            scores = scores.masked_fill(
-                self.tril[:T, :S] == 0,
-                float("-inf")
-            )
+            scores = scores.masked_fill(self.tril[:T, :S] == 0, float("-inf"))
 
-        weights = F.softmax(scores, dim=-1)               # [B, T, S]
-        out = weights @ V                                 # [B, T, C]
+        weights = F.softmax(scores, dim=-1)  # [B, T, S]
+        out = weights @ V  # [B, T, C]
 
         return out
 
@@ -95,6 +96,7 @@ class EncoderBlock(nn.Module):
     BERT-like block:
     self-attention without causal masking.
     """
+
     def __init__(self, d_model, context_length):
         super().__init__()
         self.ln1 = nn.LayerNorm(d_model)
@@ -115,6 +117,7 @@ class DecoderBlock(nn.Module):
     Students should complete the forward pass
     by mirroring the EncoderBlock structure.
     """
+
     def __init__(self, d_model, context_length):
         super().__init__()
         self.ln1 = nn.LayerNorm(d_model)
@@ -143,6 +146,7 @@ class EncoderDecoderBlock(nn.Module):
 
     Students should complete the forward pass.
     """
+
     def __init__(self, d_model, context_length):
         super().__init__()
 

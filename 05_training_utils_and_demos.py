@@ -4,6 +4,9 @@
 # GPT demo intentionally left empty.
 # ============================================================
 
+import torch
+
+
 @torch.no_grad()
 def estimate_bert_loss(model, eval_iters=20):
     model.eval()
@@ -18,10 +21,7 @@ def estimate_bert_loss(model, eval_iters=20):
             acc = (preds == y).float().mean().item()
             losses.append(loss.item())
             accs.append(acc)
-        out[split] = {
-            "loss": sum(losses) / len(losses),
-            "acc": sum(accs) / len(accs)
-        }
+        out[split] = {"loss": sum(losses) / len(losses), "acc": sum(accs) / len(accs)}
     model.train()
     return out
 
@@ -72,7 +72,7 @@ bert_model = TinyBERT(
     d_model=d_model,
     context_length=context_length,
     n_layers=n_layers,
-    n_classes=2
+    n_classes=2,
 ).to(device)
 
 bert_optimizer = torch.optim.Adam(bert_model.parameters(), lr=learning_rate)
@@ -108,7 +108,7 @@ bart_model = TinyBART(
     vocab_size=vocab_size,
     d_model=d_model,
     context_length=context_length,
-    n_layers=n_layers
+    n_layers=n_layers,
 ).to(device)
 
 bart_optimizer = torch.optim.Adam(bart_model.parameters(), lr=learning_rate)

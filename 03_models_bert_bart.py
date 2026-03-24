@@ -4,26 +4,32 @@
 # Students can mirror these for TinyGPT.
 # ============================================================
 
+import torch
+from torch import nn
+import torch.nn.functional as F
+
+
 class TinyBERT(nn.Module):
     """
     Encoder-only transformer with a classification head.
     """
+
     def __init__(
         self,
         vocab_size: int,
         d_model: int,
         context_length: int,
         n_layers: int,
-        n_classes: int = 2
+        n_classes: int = 2,
     ):
         super().__init__()
 
         self.token_embedding = nn.Embedding(vocab_size, d_model)
         self.position_embedding = nn.Embedding(context_length, d_model)
 
-        self.blocks = nn.Sequential(*[
-            EncoderBlock(d_model, context_length) for _ in range(n_layers)
-        ])
+        self.blocks = nn.Sequential(
+            *[EncoderBlock(d_model, context_length) for _ in range(n_layers)]
+        )
 
         self.ln_f = nn.LayerNorm(d_model)
         self.classifier = nn.Linear(d_model, n_classes)
@@ -53,12 +59,9 @@ class TinyBART(nn.Module):
     """
     Encoder-decoder transformer.
     """
+
     def __init__(
-        self,
-        vocab_size: int,
-        d_model: int,
-        context_length: int,
-        n_layers: int
+        self, vocab_size: int, d_model: int, context_length: int, n_layers: int
     ):
         super().__init__()
 
@@ -70,13 +73,13 @@ class TinyBART(nn.Module):
         self.src_position_embedding = nn.Embedding(context_length, d_model)
         self.tgt_position_embedding = nn.Embedding(context_length, d_model)
 
-        self.encoder_blocks = nn.Sequential(*[
-            EncoderBlock(d_model, context_length) for _ in range(n_layers)
-        ])
+        self.encoder_blocks = nn.Sequential(
+            *[EncoderBlock(d_model, context_length) for _ in range(n_layers)]
+        )
 
-        self.decoder_blocks = nn.ModuleList([
-            EncoderDecoderBlock(d_model, context_length) for _ in range(n_layers)
-        ])
+        self.decoder_blocks = nn.ModuleList(
+            [EncoderDecoderBlock(d_model, context_length) for _ in range(n_layers)]
+        )
 
         self.ln_f = nn.LayerNorm(d_model)
         self.lm_head = nn.Linear(d_model, vocab_size)
