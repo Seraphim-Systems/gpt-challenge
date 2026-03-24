@@ -61,13 +61,13 @@ BERT has a small text size that it uses, whereas GPT generally uses a bigger con
 Both d_model and number of layers are hyperparameters that influence model capacity, as mentioned for the first question, so the model would benefit from increasing one of them as it would learn more complex patterns and lead to better performance. However, the tradeoff is that it would require more computation, time, and VRAM. Moreover, if the dataset is small and the dimensions or number of layers are too big, the model might overfit and generalize poorly. Also, deeper models can lead to vanishng gradients or exploding gradients, which can make training unstable. 
 ---
 
-### [ ] Task 2: The Attention Mechanism
+### [x] Task 2: The Attention Mechanism
 
-- [ ] The AttentionHead is fully supplied in `02_core_modules.py`. Since this is the key architectural unit behind all three models, answer the question below.
+- [x] The AttentionHead is fully supplied in `02_core_modules.py`. Since this is the key architectural unit behind all three models, answer the question below.
 
 **Questions:**
 
-- [ ] Temporarily modify the attention mechanism so that causal masking is disabled. Run the GPT model later in the activity (Task 6) with and without masking, using the same prompt. Compare the generated outputs and describe two concrete differences.
+- [x] Temporarily modify the attention mechanism so that causal masking is disabled. Run the GPT model later in the activity (Task 6) with and without masking, using the same prompt. Compare the generated outputs and describe two concrete differences.
 
 ---
 
